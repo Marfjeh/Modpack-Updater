@@ -16,11 +16,12 @@
   "author": "marf",
   "license": "SEE LICENSE IN LICENCE",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/Marfjeh/Modpack-Updater.git"
+    "type": "git",
+    "url": "https://github.com/Marfjeh/Modpack-Updater.git"
   },
   "dependencies": {
     "request": "^2.88.0",
+    "rimraf": "^2.6.2",
     "sha1-file": "^1.0.4",
     "unzip": "^0.1.11"
   }

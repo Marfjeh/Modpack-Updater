@@ -1,9 +1,10 @@
-const downloadURL = "https://fileserver2.marfprojects.nl/modpack/download/FabulousCraft_patch.zip";
+const downloadURL = "https://fileserver.marfprojects.nl/modpack/download/FabulousCraft_patch.zip";
 const http = require('https');
 const fs = require('fs');
 const unzip = require("unzip");
 const sha1File = require('sha1-file');
-var request = require("request");
+const rimraf = require('rimraf');
+const request = require("request");
 let sha1expected = "";
 console.log("SweetNyanCraft Modpack Updater Version 0.1");
 console.log("------------------------------------------");
@@ -13,9 +14,9 @@ console.log("This means it will remove custom mods you've added.");
 function getsha1() {
     console.log("Getting Checksum from Server...");
     request({
-        uri: "https://fileserver2.marfprojects.nl/modpack/update.txt",
+        uri: "https://fileserver.marfprojects.nl/modpack/update.txt",
         method: "GET",
-        timeout: 100,
+        timeout: 1000,
         followRedirect: true,
         maxRedirects: 10
         }, function(error, response, body) {
@@ -31,6 +32,14 @@ function getsha1() {
         });
 }
 
+function clearFolders() {
+    rimraf('./mods/*', function () { 
+        rimraf('./config/*', function () { 
+            unzipjob();
+        });
+    });
+}
+
 function verify() {    
     console.log("Checking SHA-1 sum...");
     let sha1zip = sha1File("./test.zip");
@@ -38,7 +47,7 @@ function verify() {
     console.log("Got SHA-1: " + sha1zip);
     if (sha1zip === sha1expected) {
         console.log("SHA-1 Verify success! Unzipping...");
-        unzipjob();
+        clearFolders();
     }
     else {
         console.error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -56,7 +65,7 @@ function verify() {
 function unzipjob() {
     fs.createReadStream('./test.zip').pipe(unzip.Extract({ path: '.' }));
     fs.unlinkSync("./test.zip");
-    console.log("Done! Happy playing!");
+    console.log("Finishing in a bit, still extracting...");
 }
 
 var download = function(url, dest, cb) {
@@ -72,5 +81,5 @@ var download = function(url, dest, cb) {
     if (cb) cb(err.message);
   });
 };
-
+//clearFolders();
 getsha1();
