@@ -23,3 +23,4 @@ Written in nOdE.jS. compiled into binrary files using `pkg` so the user doesnt n
 * Version manager so it doesnt redownload the already installed version
 * Prevent from deleting user-added mods.
 * Switch from SHA-1 to something else?
+* abillity to launch the game? and interface?
