@@ -1,8 +1,7 @@
 {
-    "modpack-name": "FabulousCraft",
-    "modpack-zip": "https://fileserver2.marfprojects.nl/modpack/download/FabulousCraft_patch.zip",
-    "modpack-version": "0.0.1",
-    "validate-sha1": true,
-    "sha1-sum": "https://fileserver2.marfprojects.nl/modpack/update.txt"
+    "Name": "Modpacknamehere",
+    "URL": "DownloadzipURLhere",
+    "AutoUpdater": true,
+    "Version": "1.0.0",
+    "sha1sum": "URLpathoftheupdate.phpfile"
 }
-

@@ -1,35 +1,54 @@
-const downloadURL = "https://fileserver.marfprojects.nl/modpack/download/FabulousCraft_patch.zip";
-const http = require('https');
-const fs = require('fs');
-const unzip = require("unzip");
-const sha1File = require('sha1-file');
-const rimraf = require('rimraf');
-const request = require("request");
-let sha1expected = "";
-console.log("SweetNyanCraft Modpack Updater Version 0.1");
-console.log("------------------------------------------");
-console.log("WARNING! This will overwrite your mods and config folders!");
-console.log("This means it will remove custom mods you've added.");
+const   http = require('https'),
+        fs = require('fs'),
+        unzip = require("unzip"),
+        sha1File = require('sha1-file'),
+        rimraf = require('rimraf'),
+        request = require("request");
 
-function getsha1() {
+let modpackjson = JSON.parse(fs.readFileSync('./modpack.json', 'utf8'));
+let version = "";
+let sha1expected = "";
+
+console.log("SweetNyanCraft Modpack Updater Version 0.2");
+console.log("Github: https://github.com/Marfjeh/Modpack-Updater")
+console.log("------------------------------------------");
+console.log("Modpack: " + modpackjson.Name);
+console.log("Modpack version: " + modpackjson.Version);
+console.log("------------------------------------------");
+
+
+function init() {
     console.log("Getting Checksum from Server...");
     request({
-        uri: "https://fileserver.marfprojects.nl/modpack/update.txt",
+        uri: modpackjson.sha1sum,
         method: "GET",
-        timeout: 1000,
+        timeout: 10000,
         followRedirect: true,
         maxRedirects: 10
-        }, function(error, response, body) {
-            if (error) {
-                console.error("Error getting checksum. do you have internet?");
-                console.error(error);
-                process.exit(1);
-            }
-            sha1expected = body.replace(/\n$/, '');
-            console.log("got: " + sha1expected);
+    }, function(error, response, body) {
+        if (error) {
+            console.error("Error getting checksum. do you have internet?");
+            console.error("Giving up...");
+            console.error(error);
+            process.exit(1);
+        }
+        let bodyjson = JSON.parse(body);
+        sha1expected = bodyjson.sha1;
+        version = bodyjson.version;
+        console.log("Version on the server : " + version);
+        if (!modpackjson.AutoUpdater) {
+            console.log("AutoUpdate is disabled in the modpack.json");
+            process.exit(0);
+        }
+        else if (version === modpackjson.Version) {
+            console.log("You're already on the newest version!");
+            process.exit(0);
+        } else {
+            console.log("Update found!");
             console.log("Downloading update...");
-            download(downloadURL, "./test.zip", null);
-        });
+            download(modpackjson.URL, "./deployment.zip", null);
+        }
+    });
 }
 
 function clearFolders() {
@@ -42,29 +61,23 @@ function clearFolders() {
 
 function verify() {    
     console.log("Checking SHA-1 sum...");
-    let sha1zip = sha1File("./test.zip");
+    let sha1zip = sha1File("./deployment.zip");
     console.log("Expecting SHA-1: " + sha1expected);
-    console.log("Got SHA-1: " + sha1zip);
+    console.log("      Got SHA-1: " + sha1zip);
     if (sha1zip === sha1expected) {
         console.log("SHA-1 Verify success! Unzipping...");
         clearFolders();
     }
     else {
-        console.error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        console.error("@  WARNING: SHA-1 IDENTIFICATION MATCH IS INVAILID!  @");
-        console.error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        console.error("IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!");
-        console.error("Someone could be eavesdropping on you right now (man-in-the-middle attack)!");
-        console.error("Or, Marf derped and he didnt update the correct SHA-1 on the server.");
-        console.error("Cancelling update...");
+        console.error("ERROR: SHA-1 Verify failed.");
         process.exit(1);
     }
     
 }
 
 function unzipjob() {
-    fs.createReadStream('./test.zip').pipe(unzip.Extract({ path: '.' }));
-    fs.unlinkSync("./test.zip");
+    fs.createReadStream('./deployment.zip').pipe(unzip.Extract({ path: '.' }));
+    fs.unlinkSync("./deployment.zip");
     console.log("Finishing in a bit, still extracting...");
 }
 
@@ -81,5 +94,5 @@ var download = function(url, dest, cb) {
     if (cb) cb(err.message);
   });
 };
-//clearFolders();
-getsha1();
+
+init();
