@@ -1,37 +1,51 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 )
 
 type modpack struct {
-	URI          string
-	name         string
-	version      string
-	remoteserver string
-	downloadurl  string
-	autoupdate   bool
+	Name        string
+	URL         string
+	AutoUpdater bool
+	Version     string
+	sha1sum     string
 }
 
 func main() {
-	fmt.Println("SweetNyanCraft Modpack updater Version 0.2 \n")
-	if err := DownloadFile("deployment.zip", ""); err != nil {
+	var modpack modpack
+	data, err := ioutil.ReadFile("./modpack.json")
+	if err != nil {
 		failExit(err)
 	}
-}
 
-func populateModpackStruct() {
-	//Read the local modpack.json on the current disk.
-	//Then popluate the modpack struct.
-	var modpack modpack
+	err = json.Unmarshal(data, &modpack)
+	if err != nil {
+		failExit(err)
+	}
 
+	fmt.Println("SweetNyanCraft Modpack Updater Version 1.0\n" +
+		"Github: https://github.com/Marfjeh/Modpack-Updater\n" +
+		"Licence: GNU Version 2.0\n" +
+		"------------------------------------------\n" +
+		"Modpack: " + modpack.Name + "\n" +
+		"Modpack version: " + modpack.Version + "\n" +
+		"------------------------------------------")
+
+	fmt.Printf("Checking for updated version...")
+
+	//if err := DownloadFile("deployment.zip", ""); err != nil {
+	//failExit(err)
+	//}
 }
 
 func failExit(err error) {
-	fmt.Println("----------------------\nERROR\n----------------------\n" + err.Error())
+	fmt.Println("--------- ERROR ---------\n" + err.Error())
 	os.Exit(1)
 }
 
