@@ -1,7 +1,7 @@
 {
-    "Name": "Here Be Dragons!",
-    "URL": "https://fileserver2.marfprojects.nl/modpack/mmp_herebedragons_patch.zip",
+    "Name": "Modpacknamehere",
+    "URL": "DownloadzipURLhere",
     "AutoUpdater": true,
-    "Version": "8.0.2",
-    "sha1sum": "https://fileserver2.marfprojects.nl/modpack/mmp_herebedragons.php"
+    "Version": "1.0.0",
+    "sha1sum": "URLpathoftheupdate.phpfile"
 }
