@@ -1,10 +1,31 @@
 # SweetNyanCraft Modpack updater
 
 This is used to update the current modpack for MultiMC modpacks.
+This is a simple Modpack updater for MultiMC instances. it also works without MultiMC.
 
-Because, MultiMC doesn't have a feature to update modpacks sadly so out of frustration I wrote this.
+It keeps everything simple without configuration hell. 1 zip file and 1 json file is needed really.
 
-Written in Go. which is much better than the node.js version of this. You can still get the source code in the branch: `legacy/nodejs```
+This may not make some mod developers happy that i'm rehosting their mods but downloading from curse is just a nightmare.
+(And i'm lazy sorry.)
+
+Currently MultiMC doesn't have a feature to update modpacks sadly so out of frustration I wrote this.
+because I do not want to use different launchers such like Techniclauncher, Curse launcher, GDLauncher (So bloated)
+MultiMC is not as bloated.
+
+This is written in Go. which is much better than the bloated node.js version of this. You can still get the source code in the branch: `legacy/nodejs```
+
+
+
+
+<b>If you're a mod developer please consider this:</b>
+
+I'm not making money by rehosting your mods nor do I claim that I made the mods. I'm not those Malvertising websites like 9minecraft that is full with malware and ads.
+
+My only goal is only playing and having fun with your mods, and making it easier for me to distribute updates to my
+
+friends without giving zip files to everyone when I change something.
+
+Maybe i'll consider changing the way to still download it from curse. but for now not going to do that sorry.
 
 
 ## Features
@@ -34,6 +55,9 @@ please note this will only compile it for your system. to compile it for differe
 
 
 ## using this for your own pack
+
+You're free to use this for your own modpack. you do not need to ask permission only what I ask you to comply to GNU version 3 Licence,
+and crediting me would be much appreciated. I would love to see people using it or even make it better.
 
 first you need to have a webserver, upload the php file in the `web` directory to your webserver.
 

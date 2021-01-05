@@ -82,14 +82,11 @@ func main() {
 	}
 
 	Modpackupdate := Checkupdate(modpack.Sha1sum, modpack.Version)
-
 	err = DownloadFile("deployment.zip", modpack.URL)
-
 	fmt.Println(" [ OK ]")
 
 	fmt.Printf("Verifying checksum of deployment...")
-
-	ziphash := getHash(Modpackupdate.Sha1)
+	ziphash := getHash()
 	if ziphash != Modpackupdate.Sha1 {
 		fmt.Println(" [ FAILED ]")
 
@@ -116,11 +113,10 @@ func main() {
 	fmt.Println(" [ OK ]")
 	fmt.Println("Updating is complete. you can now start up your modpack.")
 
-
-
 	if err != nil {
 		failExit(err)
 	}
+
 	os.Exit(0)
 }
 
@@ -253,7 +249,7 @@ func extractZip() ([]string, error) {
 	return filenames, nil
 }
 
-func getHash(checksum string) string {
+func getHash() string {
 	f, err := os.Open("deployment.zip")
 	if err != nil {
 		fmt.Println(" [ Failed ]")
