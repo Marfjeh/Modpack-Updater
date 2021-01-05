@@ -2,8 +2,10 @@
 
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+The golang versions are supported. When a new version has released the older version will no longer get any support and should update. to see what version we're running on see the tags. Unless there is a exception.
+
+The Node.JS version of Modpack-Updater is deprecated and should not be used anymore.
+
 
 | Version | Supported          |
 | ------- | ------------------ |
