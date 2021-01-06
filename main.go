@@ -14,7 +14,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+*/
 
 package main
 
@@ -38,29 +38,24 @@ import (
 type modpack struct {
 	Name        string `json:"Name"`
 	URL         string `json:"URL"`
-	AutoUpdater bool `json:"AutoUpdater"`
+	AutoUpdater bool   `json:"AutoUpdater"`
 	Version     string `json:"Version"`
 	Sha1sum     string `json:"sha1sum"`
 }
 
 type modpackupdate struct {
-	Version		string `json:"version"`
-	Sha1		string `json:"sha1"`
+	Version string `json:"version"`
+	Sha1    string `json:"sha1"`
 }
 
 func main() {
 	var modpack modpack
 
+	//Read the local modpack file.
 	data, err := ioutil.ReadFile("./modpack.json")
-	if err != nil {
-		failExit(err)
-	}
-
 	err = json.Unmarshal(data, &modpack)
-	if err != nil {
-		failExit(err)
-	}
 
+	//Print logo.
 	fmt.Println("SweetNyanCraft Modpack Updater Version 1.0\n" +
 		"Github: https://github.com/Marfjeh/Modpack-Updater\n" +
 		"-----------------------------------------------------------------------------\n" +
@@ -73,6 +68,7 @@ func main() {
 		"under certain conditions; see the git repo for details.\n" +
 		"-----------------------------------------------------------------------------\n")
 
+	//Init Update check
 	fmt.Printf("Checking for updated version... ")
 
 	if !modpack.AutoUpdater {
@@ -81,8 +77,8 @@ func main() {
 		os.Exit(0)
 	}
 
-	Modpackupdate := Checkupdate(modpack.Sha1sum, modpack.Version)
-	err = DownloadFile("deployment.zip", modpack.URL)
+	Modpackupdate := checkupdate(modpack.Sha1sum, modpack.Version)
+	err = downloadFile("deployment.zip", modpack.URL)
 	fmt.Println(" [ OK ]")
 
 	fmt.Printf("Verifying checksum of deployment...")
@@ -101,7 +97,7 @@ func main() {
 	}
 
 	fmt.Printf("Cleaning mods and config folders...")
-	cleanFolders()
+	err = cleanFolders()
 	fmt.Println(" [ OK ]")
 
 	fmt.Printf("Extracting update package...")
@@ -111,6 +107,7 @@ func main() {
 	fmt.Printf("Cleaning up... ")
 	err = os.Remove("deployment.zip")
 	fmt.Println(" [ OK ]")
+
 	fmt.Println("Updating is complete. you can now start up your modpack.")
 
 	if err != nil {
@@ -121,13 +118,13 @@ func main() {
 }
 
 func failExit(err error) {
-	fmt.Println("--------- ERROR ---------\n" + err.Error())
+	log.Fatal("--------- ERROR ---------\n" + err.Error())
 	os.Exit(1)
 }
 
-func Checkupdate(url string, version string) modpackupdate {
+func checkupdate(url string, version string) modpackupdate {
 	ModpackUpdate := modpackupdate{}
-	getJson(url, &ModpackUpdate)
+	getJSON(url, &ModpackUpdate)
 
 	if version == ModpackUpdate.Version {
 		fmt.Println("[ Already up-to-date ]")
@@ -142,7 +139,7 @@ func Checkupdate(url string, version string) modpackupdate {
 
 var myClient = &http.Client{Timeout: 60 * time.Second}
 
-func getJson(url string, target interface{}) error {
+func getJSON(url string, target interface{}) error {
 	r, err := myClient.Get(url)
 	if err != nil {
 		return err
@@ -152,12 +149,11 @@ func getJson(url string, target interface{}) error {
 	return json.NewDecoder(r.Body).Decode(target)
 }
 
-// DownloadFile will download a url to a local file. It's efficient because it will
+// downloadFile will download a url to a local file. It's efficient because it will
 // write as it downloads and not load the whole file into memory.
-func DownloadFile(filepath string, url string) error {
+func downloadFile(filepath string, url string) error {
 
 	fmt.Printf("Downloading update. This can take some time depending on your internet speed...")
-
 	// Get the data
 	resp, err := http.Get(url)
 	if err != nil {
@@ -177,27 +173,27 @@ func DownloadFile(filepath string, url string) error {
 	return err
 }
 
-func cleanFolders() {
+//Clean the mods and config folders so we can move in the new mods.
+func cleanFolders() error {
 	moddir, err := ioutil.ReadDir("mods/")
 	for _, d := range moddir {
 		err = os.RemoveAll(path.Join([]string{"mods", d.Name()}...))
 		if err != nil {
-			log.Fatal("Unable to delete file.")
-			log.Fatal(err)
-			os.Exit(1)
+			return err
 		}
 	}
 	configdir, err := ioutil.ReadDir("config/")
 	for _, d := range configdir {
 		err = os.RemoveAll(path.Join([]string{"mods", d.Name()}...))
 		if err != nil {
-			log.Fatal("Unable to delete file.")
-			log.Fatal(err)
-			os.Exit(1)
+			return err
 		}
 	}
+
+	return nil
 }
 
+//Extract the zip containing the files.
 func extractZip() ([]string, error) {
 	var filenames []string
 
@@ -249,6 +245,8 @@ func extractZip() ([]string, error) {
 	return filenames, nil
 }
 
+//Calcuate the hash of the deployment.zip to verify that the zip is downloaded successfully.
+//So people with awful internet connection wont get currupted files.
 func getHash() string {
 	f, err := os.Open("deployment.zip")
 	if err != nil {
@@ -259,7 +257,7 @@ func getHash() string {
 	defer f.Close()
 
 	h := sha1.New()
-	if _, err := io.Copy(h, f); err != nil  {
+	if _, err := io.Copy(h, f); err != nil {
 		fmt.Println(" [ Failed ]")
 		failExit(err)
 	}
