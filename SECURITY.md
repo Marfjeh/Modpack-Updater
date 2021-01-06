@@ -2,9 +2,10 @@
 
 ## Supported Versions
 
-The golang versions are supported. When a new version has released the older version will no longer get any support and should update. to see what version we're running on see the tags. Unless there is a exception.
+Only the golang versions are supported. When there is a new version of the updater the older version of the Modpack-updater is automatically marked end-of-life and will not get any security updates. Unless there is a exception but that will be stated for example a massive overhaul of the updater.
 
-The Node.JS version of Modpack-Updater is deprecated and should not be used anymore.
+The Node.JS version of Modpack-Updater is end-of-life and should no longer be used anymore due to too many dependency's having security issues.
+The golang version does not use any 3rd-party dependency's.
 
 
 | Version | Supported          |
