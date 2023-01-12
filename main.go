@@ -1,6 +1,6 @@
 /*
 	Modpack Updater
-    Copyright (C) 2021  Marfjeh
+    Copyright (C) 2023  Marfjeh
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ func main() {
 		"Modpack: " + modpack.Name + "\n" +
 		"Modpack version: " + modpack.Version + "\n" +
 		"-----------------------------------------------------------------------------\n" +
-		"Copyright (C) 2021  Marfjeh\n" +
+		"Copyright (C) 2023  Marfjeh\n" +
 		"This program comes with ABSOLUTELY NO WARRANTY; for details see the git repo.\n" +
 		"This is free software, and you are welcome to redistribute it\n" +
 		"under certain conditions; see the git repo for details.\n" +
