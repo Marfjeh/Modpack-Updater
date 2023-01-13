@@ -18,8 +18,7 @@ This may not make some mod developers happy that i'm rehosting their mods but do
 
 Also a good option to use, if you want to play by the rules is using [packwiz](https://packwiz.infra.link/).
 
-It can download the mods from Modrinth and curseforge instead you rehosting people's mods and making them angry. but it is kind of a configuration hell.
-
+It can download the mods from Modrinth and curseforge instead you rehosting people's mods and making them angry.
 
 ## Features
 
