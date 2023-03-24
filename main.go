@@ -51,12 +51,18 @@ type modpackupdate struct {
 func main() {
 	var modpack modpack
 
+	if os.Args[1] == "-?" {
+		fmt.Println("Command arguments:")
+		fmt.Println("-f to force update.")
+		os.Exit(0)
+	}
+
 	//Read the local modpack file.
 	data, err := ioutil.ReadFile("./modpack.json")
 	err = json.Unmarshal(data, &modpack)
 
 	//Print logo.
-	fmt.Println("SweetNyanCraft Modpack Updater Version 1.0\n" +
+	fmt.Println("Modpack Updater Version 1.1\n" +
 		"Github: https://github.com/Marfjeh/Modpack-Updater\n" +
 		"-----------------------------------------------------------------------------\n" +
 		"Modpack: " + modpack.Name + "\n" +
@@ -74,6 +80,7 @@ func main() {
 	if !modpack.AutoUpdater {
 		fmt.Println(" [ FAILED ]")
 		fmt.Println("Auto update is disabled in modpack.json exiting.")
+		fmt.Println("If you want to re-enable auto update, please set AutoUpdate to true in modpack.json file.")
 		os.Exit(0)
 	}
 
@@ -96,7 +103,7 @@ func main() {
 		fmt.Println("Expected checksum: " + ziphash)
 	}
 
-	fmt.Printf("Cleaning mods and config folders...")
+	fmt.Printf("Cleaning mods folder...")
 	err = cleanFolders()
 	fmt.Println(" [ OK ]")
 
@@ -125,6 +132,10 @@ func failExit(err error) {
 func checkupdate(url string, version string) modpackupdate {
 	ModpackUpdate := modpackupdate{}
 	getJSON(url, &ModpackUpdate)
+
+	if os.Args[1] == "-f" {
+		version = "force update"
+	}
 
 	if version == ModpackUpdate.Version {
 		fmt.Println("[ Already up-to-date ]")
@@ -173,17 +184,10 @@ func downloadFile(filepath string, url string) error {
 	return err
 }
 
-//Clean the mods and config folders so we can move in the new mods.
+// Clean the mods folder so we can move in the new mods.
 func cleanFolders() error {
 	moddir, err := ioutil.ReadDir("mods/")
 	for _, d := range moddir {
-		err = os.RemoveAll(path.Join([]string{"mods", d.Name()}...))
-		if err != nil {
-			return err
-		}
-	}
-	configdir, err := ioutil.ReadDir("config/")
-	for _, d := range configdir {
 		err = os.RemoveAll(path.Join([]string{"mods", d.Name()}...))
 		if err != nil {
 			return err
@@ -193,7 +197,7 @@ func cleanFolders() error {
 	return nil
 }
 
-//Extract the zip containing the files.
+// Extract the zip containing the files.
 func extractZip() ([]string, error) {
 	var filenames []string
 
@@ -245,8 +249,8 @@ func extractZip() ([]string, error) {
 	return filenames, nil
 }
 
-//Calcuate the hash of the deployment.zip to verify that the zip is downloaded successfully.
-//So people with awful internet connection wont get currupted files.
+// Calcuate the hash of the deployment.zip to verify that the zip is downloaded successfully.
+// So people with awful internet connection wont get currupted files.
 func getHash() string {
 	f, err := os.Open("deployment.zip")
 	if err != nil {
