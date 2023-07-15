@@ -50,19 +50,22 @@ type modpackupdate struct {
 
 func main() {
 	var modpack modpack
-
-	if os.Args[1] == "-?" {
-		fmt.Println("Command arguments:")
-		fmt.Println("-f to force update.")
-		os.Exit(0)
-	}
+  args := os.Args[1:]
+  
+  if len(args) != 0 {
+	  if os.Args[1] == "-?" {
+		  fmt.Println("Command arguments:")
+		  fmt.Println("-f to force update.")
+		  os.Exit(0)
+	  }
+  }
 
 	//Read the local modpack file.
 	data, err := ioutil.ReadFile("./modpack.json")
 	err = json.Unmarshal(data, &modpack)
 
 	//Print logo.
-	fmt.Println("Modpack Updater Version 1.1\n" +
+	fmt.Println("Modpack Updater Version 1.2\n" +
 		"Github: https://github.com/Marfjeh/Modpack-Updater\n" +
 		"-----------------------------------------------------------------------------\n" +
 		"Modpack: " + modpack.Name + "\n" +
@@ -130,12 +133,16 @@ func failExit(err error) {
 }
 
 func checkupdate(url string, version string) modpackupdate {
+  args := os.Args[1:]
+
 	ModpackUpdate := modpackupdate{}
 	getJSON(url, &ModpackUpdate)
 
-	if os.Args[1] == "-f" {
-		version = "force update"
-	}
+  if len(args) != 0 {
+	  if os.Args[1] == "-f" {
+		  version = "force update"
+	  }
+  }
 
 	if version == ModpackUpdate.Version {
 		fmt.Println("[ Already up-to-date ]")
